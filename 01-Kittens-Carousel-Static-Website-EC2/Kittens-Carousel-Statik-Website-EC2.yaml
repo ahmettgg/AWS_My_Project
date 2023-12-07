@@ -25,16 +25,19 @@ Resources:
           Value: Web Server of StackName
 
       UserData:
-        Fn::Base64:
-          #!/bin/bash
+        Fn::Base64: !Sub |
+          #! /bin/bash
           yum update -y
-          yum install -y httpd wget
-          mkdir /var/www/html
-          chmod -R 777 /var/www/html
-          rm index.html
-          wget https://raw.githubusercontent.com/ahmettgg/Proje101/master/static-web/index.html
-          service httpd start
-          chkconfig httpd on
+          yum install -y nginx wget
+          systemctl start nginx
+          systemctl enable nginx
+
+          wget https://raw.githubusercontent.com/ahmettgg/My_Project/main/01-Kittens-Carousel-Static-Website-EC2/static-web/index.html
+          wget https://raw.githubusercontent.com/ahmettgg/My_Project/main/01-Kittens-Carousel-Static-Website-EC2/static-web/cat0.jpg
+          wget https://raw.githubusercontent.com/ahmettgg/My_Project/main/01-Kittens-Carousel-Static-Website-EC2/static-web/cat1.jpg
+          wget https://raw.githubusercontent.com/ahmettgg/My_Project/main/01-Kittens-Carousel-Static-Website-EC2/static-web/cat2.jpg
+          chown -R nginx:nginx /usr/share/nginx/html
+          systemctl restart nginx
 
   firstscr:
     Type: AWS::EC2::SecurityGroup
