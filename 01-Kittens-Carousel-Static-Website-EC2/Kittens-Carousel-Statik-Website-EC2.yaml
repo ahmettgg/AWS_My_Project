@@ -26,18 +26,17 @@ Resources:
 
       UserData:
         Fn::Base64: !Sub |
-          #! /bin/bash
-          yum update -y
-          yum install -y nginx wget
-          systemctl start nginx
-          systemctl enable nginx
-
+          #!/bin/bash
+          sudo yum update -y
+          sudo yum install -y httpd wget
+          sudo systemctl start httpd
+          sudo systemctl enable httpd
+          sudo chmod -R 755 /var/www/html/
+          sudo chown -R apache:apache /var/www/html/
           wget https://raw.githubusercontent.com/ahmettgg/My_Project/main/01-Kittens-Carousel-Static-Website-EC2/static-web/index.html
           wget https://raw.githubusercontent.com/ahmettgg/My_Project/main/01-Kittens-Carousel-Static-Website-EC2/static-web/cat0.jpg
           wget https://raw.githubusercontent.com/ahmettgg/My_Project/main/01-Kittens-Carousel-Static-Website-EC2/static-web/cat1.jpg
           wget https://raw.githubusercontent.com/ahmettgg/My_Project/main/01-Kittens-Carousel-Static-Website-EC2/static-web/cat2.jpg
-          chown -R nginx:nginx /usr/share/nginx/html
-          systemctl restart nginx
 
   firstscr:
     Type: AWS::EC2::SecurityGroup
