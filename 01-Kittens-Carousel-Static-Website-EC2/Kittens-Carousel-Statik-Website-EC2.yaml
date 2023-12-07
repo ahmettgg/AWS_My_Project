@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  Kittens Carousel is a static website application deployed with Apache Web Server on AWS Elastic Compute Cloud (EC2) Instance using AWS Cloudformation Service.
+
+Parameters:
+  LatestAmiId:
+    Type: "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>"
+    Default: "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
+
+Resources:
+  Kittens:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref LatestAmiId
+
+      InstanceType: t2.micro
+
+      KeyName: firstkey
+
+      SecurityGroups:
+        - !Ref firstscr
+
+      Tags:
+        - Key: Name
+          Value: Web Server of StackName
+
+      UserData:
+        Fn::Base64:
+          #!/bin/bash
+          yum update -y
+          yum install -y httpd wget
+          mkdir /var/www/html
+          chmod -R 777 /var/www/html
+          rm index.html
+          wget https://raw.githubusercontent.com/ahmettgg/Proje101/master/static-web/index.html
+          service httpd start
+          chkconfig httpd on
+
+  firstscr:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: accessible via web browser from anywhere # Required
+
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
