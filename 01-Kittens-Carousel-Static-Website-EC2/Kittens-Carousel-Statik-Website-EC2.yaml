@@ -22,7 +22,7 @@ Parameters:
     Default: "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
 
 Resources:
-  myWerServer:
+  myWebServer:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: !Ref LatestAmiId
@@ -76,4 +76,4 @@ Outputs:
     Description: URL of website
     Value: !Sub
       - http://${PublicDNS}
-      - PublicDNS: !GetAtt myWerServer.PublicDnsName
+      - PublicDNS: !GetAtt myWebServer.PublicDnsName
