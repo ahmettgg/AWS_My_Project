@@ -1,47 +1,61 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: >
-  Kittens Carousel is a static website application deployed with Apache Web Server on AWS Elastic Compute Cloud (EC2) Instance using AWS Cloudformation Service.
+  This CloudFormation Template was written for running Kittens Carousel Static Website on EC2. Kittens Carousel Static Website will be deployed on Amazon Linux 2023 EC2 Instance with custom security group which allows http connections on port 80 and ssh port 22 from anywhere. Kittens Carousel Static Website is downloaded from my Public Github repository, then deployed on Apache Web Server.
 
 Parameters:
+  keyPair:
+    Description: Choose your keypair
+    Type: AWS::EC2::KeyPair::KeyName
+    Default: firstkey
+
+  instanceType:
+    Description: Choose ypur instace type
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - t3.micro
+      - t2.large
+
   LatestAmiId:
     Type: "AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>"
     Default: "/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
 
 Resources:
-  Kittens:
+  myWerServer:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: !Ref LatestAmiId
 
-      InstanceType: t2.micro
+      InstanceType: !Ref instanceType
 
-      KeyName: firstkey
+      KeyName: !Ref keyPair
 
-      SecurityGroups:
-        - !Ref firstscr
+      SecurityGroupIds:
+        - !Ref mySecGrp # second way: !GetAtt mySecGrp.GroupId
 
       Tags:
         - Key: Name
-          Value: Web Server of StackName
+          Value: !Sub ${AWS::StackName}
 
-      UserData:
-        Fn::Base64: !Sub |
-          #!/bin/bash
-          sudo yum update -y
-          sudo yum install -y httpd wget
-          sudo systemctl start httpd
-          sudo systemctl enable httpd
-          sudo chmod -R 755 /var/www/html/
-          sudo chown -R apache:apache /var/www/html/
-          sudo wget -O /var/www/html/index.html https://raw.githubusercontent.com/ahmettgg/My_Project/main/01-Kittens-Carousel-Static-Website-EC2/static-web/index.html 
-          sudo wget -O /var/www/html/cat0.jpg https://raw.githubusercontent.com/ahmettgg/My_Project/main/01-Kittens-Carousel-Static-Website-EC2/static-web/cat0.jpg 
-          sudo wget -O /var/www/html/cat1.jpg https://raw.githubusercontent.com/ahmettgg/My_Project/main/01-Kittens-Carousel-Static-Website-EC2/static-web/cat1.jpg 
-          sudo wget -O /var/www/html/cat2.jpg https://raw.githubusercontent.com/ahmettgg/My_Project/main/01-Kittens-Carousel-Static-Website-EC2/static-web/cat2.jpg
+      UserData: !Base64 |
+        #! /bin/bash
+        yum update -y
+        yum install httpd -y
+        FOLDER="https://raw.githubusercontent.com/ahmettgg/My_Project/main/01-Kittens-Carousel-Static-Website-EC2/static-web"
+        cd /var/www/html
+        wget ${FOLDER}/index.html
+        wget ${FOLDER}/cat0.jpg
+        wget ${FOLDER}/cat1.jpg
+        wget ${FOLDER}/cat2.jpg
+        systemctl start httpd
+        systemctl enable httpd
 
-  firstscr:
+  mySecGrp:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: accessible via web browser from anywhere # Required
+      GroupName: cloudformation-project-http-ssh-https
 
       SecurityGroupIngress:
         - IpProtocol: tcp
@@ -56,3 +70,10 @@ Resources:
           FromPort: 443
           ToPort: 443
           CidrIp: 0.0.0.0/0
+
+Outputs:
+  webSiteURL:
+    Description: URL of website
+    Value: !Sub
+      - http://${PublicDNS}
+      - PublicDNS: !GetAtt myWerServer.PublicDnsName
