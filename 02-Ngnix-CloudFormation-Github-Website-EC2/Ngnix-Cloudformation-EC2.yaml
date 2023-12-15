@@ -1,0 +1,22 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: |
+  Netflix website front page work  is a static website application deployed with Apache Web Server on AWS Elastic Compute Cloud (EC2) Instance using AWS Cloudformation Service.
+Parameters:
+Resources:
+
+LogicalID:
+  Type: AWS::EC2::Instance
+  Properties:
+    ImageId: "String"
+
+    InstanceType: "String"
+
+    KeyName: "String"
+
+    SecurityGroupIds: SecurityGroupIds
+
+    Tags: Tags
+
+    UserData: "String"
+
+Outputs:
