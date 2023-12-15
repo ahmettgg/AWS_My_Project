@@ -36,13 +36,12 @@ Resources:
         dnf install python3-pip -y
         pip3 install flask
         cd /home/ec2-user
-        FOLDER="https://raw.githubusercontent.com/ahmettgg/002-Roman-Numerals-Converter/"
-        wget ${FOLDER}/roman-numerals-converter-app.py
-        mkdir templates ; cd templates
-        wget ${FOLDER}/templates/index.html
-        wget ${FOLDER}/templates/result.html
+        wget https://raw.githubusercontent.com/ahmettgg/My_Project/main/03-Flask-Cloudformation-Roman-Numerals-Converter/roman-numerals-converter-app.py
+        mkdir templates && cd /home/ec2-user/templates
+        wget https://raw.githubusercontent.com/ahmettgg/My_Project/main/03-Flask-Cloudformation-Roman-Numerals-Converter/templates/index.html
+        wget https://raw.githubusercontent.com/ahmettgg/My_Project/main/03-Flask-Cloudformation-Roman-Numerals-Converter/templates/result.html
         cd ..
-        python3 roman-numerals-converter-app.py
+        sudo python3 roman-numerals-converter-app.py
 
   mySecGrp:
     Type: AWS::EC2::SecurityGroup
