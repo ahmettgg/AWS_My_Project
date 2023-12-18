@@ -1,6 +1,9 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: >
-  The Roman Numerals Converter Application aims to convert the given number to the Roman numerals. The application is to be coded in Python and deployed as a web application with Flask on AWS Elastic Compute Cloud (EC2) Instance using AWS Cloudformation and CLI Services.
+Description: |
+  CloudFormation Template for Roman Numerals Converter Application. 
+  This template creates Python Flask Web Application on Amazon Linux 2023  
+  EC2 Instance with custom security group allowing http connections on port 80, 8080 and SSH connection on port 22. 
+  Roman Numerals Converter Application is downloaded from Github repository, then installed on Flask.
 
 Parameters:
   keyPair:
@@ -27,7 +30,7 @@ Resources:
 
       Tags:
         - Key: Name
-          Value: !Sub ${AWS::StackName}
+          Value: !Sub Web Server of ${AWS::StackName} Stack
 
       UserData: !Base64 |
         #! /bin/bash
@@ -41,12 +44,12 @@ Resources:
         wget https://raw.githubusercontent.com/ahmettgg/My_Project/main/03-Flask-Cloudformation-Roman-Numerals-Converter/templates/index.html
         wget https://raw.githubusercontent.com/ahmettgg/My_Project/main/03-Flask-Cloudformation-Roman-Numerals-Converter/templates/result.html
         cd ..
-        sudo python3 roman-numerals-converter-app.py
+        python3 roman-numerals-converter-app.py
 
   mySecGrp:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: accessible via web browser and terminal from anywhere # Required
+      GroupDescription: Enable HTTP for Flask Web Server and SSH port to secure reach to my EC2 # Required
       GroupName: cloudformation-project-http-ssh
 
       SecurityGroupIngress:
@@ -58,10 +61,14 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 8080
+          ToPort: 8080
+          CidrIp: 0.0.0.0/0
 
 Outputs:
   webSiteURL:
     Description: URL of website
     Value: !Sub
-      - http://${PublicDNS}
-      - PublicDNS: !GetAtt myWebServer.PublicDnsName
+      - http://${PIA}
+      - PIA: !GetAtt myWebServer.PublicDnsName
