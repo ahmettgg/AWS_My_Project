@@ -7,6 +7,6 @@ aws ec2 run-instances \
   --image-id ami-0230bd60aa48260c6 \
   --count 1 \
   --instance-type t2.micro \
-  --key-name first_key \
-  --user-data file://./script.sh \
+  --key-name firstkey \
+  --user-data file://./Cli.sh \
   --security-group-ids sg-0b8831412f70c500a
