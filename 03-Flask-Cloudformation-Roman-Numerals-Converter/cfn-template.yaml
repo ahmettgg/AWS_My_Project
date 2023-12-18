@@ -30,7 +30,7 @@ Resources:
 
       Tags:
         - Key: Name
-          Value: !Sub Web Server of ${AWS::StackName} Stack
+          Value: !Sub ${AWS::StackName}
 
       UserData: !Base64 |
         #! /bin/bash
@@ -49,7 +49,7 @@ Resources:
   mySecGrp:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Enable HTTP for Flask Web Server and SSH port to secure reach to my EC2 # Required
+      GroupDescription: accessible via web browser and terminal from anywhere # Required
       GroupName: cloudformation-project-http-ssh
 
       SecurityGroupIngress:
@@ -61,14 +61,10 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-        - IpProtocol: tcp
-          FromPort: 8080
-          ToPort: 8080
-          CidrIp: 0.0.0.0/0
 
 Outputs:
   webSiteURL:
     Description: URL of website
     Value: !Sub
-      - http://${PIA}
-      - PIA: !GetAtt myWebServer.PublicDnsName
+      - http://${PublicDNS}
+      - PublicDNS: !GetAtt myWebServer.PublicDnsName
