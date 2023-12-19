@@ -2,38 +2,62 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: |
   Netflix website front page work  is a static website application deployed with Apache Web Server on AWS Elastic Compute Cloud (EC2) Instance using AWS Cloudformation Service.
 Parameters:
-amiId:
-  Description: AMI ID
-  Type: AWS::EC2::Image::Id
-  Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
-keyPair:
-  Description: secret
-  Type: AWS::EC2::KeyPair::KeyName
-  Default: firstkey
-insTyp:
-  Description: Instance Id
-  Type: AWS::EC2::Instance::Id
-  Default: t2.micro
+  keyPair:
+    Description: secret
+    Type: AWS::EC2::KeyPair::KeyName
+    Default: firstkey
 
 Resources:
+  myWebSer:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-079db87dc4c10ac91
 
-myWebSer:
-  Type: AWS::EC2::Instance
-  Properties:
-    ImageId: !Ref amiId
+      InstanceType: t2.micro
 
-    InstanceType: !Ref insTyp
+      KeyName: !Ref keyPair
 
-    KeyName: !Ref keyPair
+      SecurityGroupIds:
+        - !Ref mySecGrp
 
-    SecurityGroupIds: !Ref mySecGrp
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}
 
-    Tags:
-      - Key: Name
-        Value: !Sub ${AWS::StackName}
+      UserData: !Base64 |
+        #!/bin/bash
 
-    UserData: !Base64 |
-      !#/bin/bash
+        # DNF'yi güncelle
+        dnf update -y
+
+        # Nginx'i yükle
+        dnf install nginx -y
+
+        # Nginx servisini başlat
+        systemctl start nginx
+
+        # Web sayfasının bulunduğu dizine geç
+        cd /usr/share/nginx/html
+
+        # Dosya ve dizin izinlerini düzenle
+        chmod -R 755 /usr/share/nginx/html
+
+        # Önceki index.html dosyasını sil
+        rm -f index.html
+
+        # GitHub reposundan dosyaları indir
+        wget https://raw.githubusercontent.com/ahmettgg/My_Project/main/02-Ngnix-CloudFormation-Github-Website-EC2/index.html
+        wget https://raw.githubusercontent.com/ahmettgg/My_Project/main/02-Ngnix-CloudFormation-Github-Website-EC2/script.js
+        wget https://raw.githubusercontent.com/ahmettgg/My_Project/main/02-Ngnix-CloudFormation-Github-Website-EC2/style.css
+        wget https://raw.githubusercontent.com/ahmettgg/My_Project/main/02-Ngnix-CloudFormation-Github-Website-EC2/Netflix%20Favicon.png
+        wget https://raw.githubusercontent.com/ahmettgg/My_Project/main/02-Ngnix-CloudFormation-Github-Website-EC2/Netflix_Logo_PMS.png
+        wget https://raw.githubusercontent.com/ahmettgg/My_Project/main/02-Ngnix-CloudFormation-Github-Website-EC2/netflix-arka%20resim.jpg
+
+        # Nginx servisini yeniden başlat
+        systemctl restart nginx
+
+        # Nginx servisini başlangıçta otomatik olarak başlat
+        systemctl enable nginx
 
   mySecGrp:
     Type: AWS::EC2::SecurityGroup
@@ -56,4 +80,4 @@ Outputs:
     Description: URL of Website
     Value: !Sub
       - http://${PublicDNS}
-      - PublicDNS: !GetAtt myWebServer.PublicDnsName
+      - PublicDNS: !GetAtt myWebSer.PublicDnsName
