@@ -2,21 +2,58 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: |
   Netflix website front page work  is a static website application deployed with Apache Web Server on AWS Elastic Compute Cloud (EC2) Instance using AWS Cloudformation Service.
 Parameters:
+amiId:
+  Description: AMI ID
+  Type: AWS::EC2::Image::Id
+  Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+keyPair:
+  Description: secret
+  Type: AWS::EC2::KeyPair::KeyName
+  Default: firstkey
+insTyp:
+  Description: Instance Id
+  Type: AWS::EC2::Instance::Id
+  Default: t2.micro
+
 Resources:
 
-LogicalID:
+myWebSer:
   Type: AWS::EC2::Instance
   Properties:
-    ImageId: "String"
+    ImageId: !Ref amiId
 
-    InstanceType: "String"
+    InstanceType: !Ref insTyp
 
-    KeyName: "String"
+    KeyName: !Ref keyPair
 
-    SecurityGroupIds: SecurityGroupIds
+    SecurityGroupIds: !Ref mySecGrp
 
-    Tags: Tags
+    Tags:
+      - Key: Name
+        Value: !Sub ${AWS::StackName}
 
-    UserData: "String"
+    UserData: !Base64 |
+      !#/bin/bash
+
+  mySecGrp:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: accessible via web browser and terminal from anywhere # Required
+      GroupName: SSH and HTTP
+
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
 
 Outputs:
+  LogicalID:
+    Description: URL of Website
+    Value: !Sub
+      - http://${PublicDNS}
+      - PublicDNS: !GetAtt myWebServer.PublicDnsName
