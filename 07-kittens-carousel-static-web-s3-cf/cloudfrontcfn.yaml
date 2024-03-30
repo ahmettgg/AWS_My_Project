@@ -4,7 +4,7 @@ Description: |
   web-hosting using cloudfront distribution.
 Parameters:
   KittensSubdomainName:
-    Description: full q. domain name like ottokitten.clarusway.us
+    Description: full q. domain name like www.ahmetdevops.click
     Type: String
     AllowedPattern: (?!-)[a-zA-Z0-9-.]{1,63}(?<!-)
 
