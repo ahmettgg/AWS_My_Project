@@ -46,12 +46,12 @@ Resources:
         rm -f index.html
 
         # GitHub reposundan dosyaları indir
-        wget https://raw.githubusercontent.com/ahmettgg/My_Project/main/02-Ngnix-CloudFormation-Github-Website-EC2/index.html
-        wget https://raw.githubusercontent.com/ahmettgg/My_Project/main/02-Ngnix-CloudFormation-Github-Website-EC2/script.js
-        wget https://raw.githubusercontent.com/ahmettgg/My_Project/main/02-Ngnix-CloudFormation-Github-Website-EC2/style.css
-        wget https://raw.githubusercontent.com/ahmettgg/My_Project/main/02-Ngnix-CloudFormation-Github-Website-EC2/Netflix%20Favicon.png
-        wget https://raw.githubusercontent.com/ahmettgg/My_Project/main/02-Ngnix-CloudFormation-Github-Website-EC2/Netflix_Logo_PMS.png
-        wget https://raw.githubusercontent.com/ahmettgg/My_Project/main/02-Ngnix-CloudFormation-Github-Website-EC2/netflix-arka%20resim.jpg
+        wget https://raw.githubusercontent.com/ahmettgg/AWS_My_Project/main/02-Ngnix-CloudFormation-Github-Website-EC2/index.html
+        wget https://raw.githubusercontent.com/ahmettgg/AWS_My_Project/main/02-Ngnix-CloudFormation-Github-Website-EC2/script.js
+        wget https://raw.githubusercontent.com/ahmettgg/AWS_My_Project/main/02-Ngnix-CloudFormation-Github-Website-EC2/style.css
+        wget https://raw.githubusercontent.com/ahmettgg/AWS_My_Project/main/02-Ngnix-CloudFormation-Github-Website-EC2/Netflix%20Favicon.png
+        wget https://raw.githubusercontent.com/ahmettgg/AWS_My_Project/main/02-Ngnix-CloudFormation-Github-Website-EC2/Netflix_Logo_PMS.png
+        wget https://raw.githubusercontent.com/ahmettgg/AWS_My_Project/main/02-Ngnix-CloudFormation-Github-Website-EC2/netflix-arka%20resim.jpg
 
         # Nginx servisini yeniden başlat
         systemctl restart nginx
